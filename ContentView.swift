@@ -2,56 +2,55 @@ import SwiftUI
 
 struct ContentView: View {
     @StateObject var viewModel = ViewModel()
-
+    
     var body: some View {
-        VStack {
-            // Imagem de fundo ocupando a parte superior da tela
-            AsyncImage(url: URL(string: "https://kanto.legiaodosherois.com.br/w760-h398-cfill/wp-content/uploads/2016/01/9441ced3e5ff320a6de3b653cf00ac57.jpg.webp")) { image in
-                image.resizable()
-                    .scaledToFill()  // Preenche a tela com a imagem
-                    .frame(height: 300)  // Define a altura da imagem
-                    .clipped()  // Garante que a imagem não ultrapasse os limites
-                    .ignoresSafeArea(edges: .top)  // Ignora a área segura da parte superior da tela
+        //ZStack {
+        HStack {
+            AsyncImage(url: URL(string: "https://tomi-digital-resources.storage.googleapis.com/images/classes/resources/rsc-441529-5f98b44a8ff63.jpeg")) { image in
+                image
+                    .resizable()
+                    .scaledToFit()
+                    .frame(width: 100, height: 100)
+                    .clipShape(Circle()) // Deixa a imagem circular
             } placeholder: {
-                ProgressView() // Mostra um indicador de carregamento enquanto a imagem não é carregada
+                ProgressView() // Mostra um indicador de carregamento enquanto a imagem baixa
             }
             
-            // Espaço para empurrar o conteúdo para baixo
-            Spacer()
+            Text("Welcome to Tasks")
+                .bold()
+                .font(.title)
+            
+        }
+        
 
-            // ScrollView para mostrar os personagens
-            ScrollView {
-                ForEach(viewModel.personagens) { index in
-                    HStack {
-                        // Exibe a imagem do personagem
-                        AsyncImage(url: URL(string: index.image!)) { image in
-                            image.resizable()
-                                .scaledToFit() // Ajusta o tamanho da imagem
-                        } placeholder: {
-                            ProgressView()
-                        }
-                        .frame(width: 100, height: 100)
-                        .clipShape(Circle())  // Deixa a imagem em formato circular
-
-                        // Exibe o nome do personagem
-                        VStack(alignment: .leading) {
-                            Text(index.name ?? "Nome não disponível")
-                                .foregroundColor(.black) // Cor do texto
-                                .padding(.leading, 10) // Espaçamento à esquerda do texto
-                        }
-
-                        Spacer() // Garante que a imagem e o nome ocupem o espaço desejado
-
-                    }
-                    .padding()  // Adiciona padding ao redor de cada HStack
-
-                }
-            }
             .padding()
+            
+            Spacer()
+            
+            VStack {
+                if viewModel.objeto.isEmpty {
+                    Text("Carregando...")
+                } else {
+                    List(viewModel.objeto, id: \.self) { item in
+                        Text(item.disciplina ?? "Sem disciplina")
+                            .font(.headline)
+                            .padding(3)
+                        
+                        if let tarefas = item.tarefa {
+                            ForEach(tarefas, id: \.self) { tarefa in
+                                Text("• Tarefa: \(tarefa)\n" + "• Data: \(item.data ?? "Sem Data")")
+                                    .font(.body)
+                                    .padding(.leading, 10)
+                                     }
+                            }
+                        }
+                    }
+                }
+            
+        .onAppear {
+            viewModel.fetch()
         }
-        .onAppear() {
-            viewModel.fetch() // Chama a função de fetch quando a view aparece
-        }
+
     }
 }
 

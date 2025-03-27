@@ -1,38 +1,35 @@
 import Foundation
 
-
-class ViewModel: ObservableObject { // Conforma com ObservableObject para ser reativo no SwiftUI
+class ViewModel: ObservableObject {
     
-    // @Published: Notifica a interface do SwiftUI sempre que o array de personagens for atualizado
-    @Published var personagens: [HaPo] = []
+    @Published var objeto: [obj] = []
     
-    // Função responsável por buscar os personagens da API
     func fetch() {
-        
-        // Define a URL da API que retorna personagens da casa Grifinória
-        guard let url = URL(string: "https://hp-api.onrender.com/api/characters/house/gryffindor") else {
+        guard let url = URL(string: "http://127.0.0.1:1880/localhostGet") else {
+            print("URL inválida")
             return
         }
         
-        let task = URLSession.shared.dataTask(with: url) { [weak self] data, _, error in
+        let task = URLSession.shared.dataTask(with: url) { data, response, error in
+            if let error = error {
+                print("Erro na requisição: \(error)")
+                return
+            }
             
-            guard let data = data, error == nil else {
+            guard let data = data else {
+                print("Dados vazios")
                 return
             }
             
             do {
-                let parsed = try JSONDecoder().decode([HaPo].self, from: data)
-                
+                let parsed = try JSONDecoder().decode([obj].self, from: data)
                 DispatchQueue.main.async {
-                    self?.personagens = parsed
+                    self.objeto = parsed
                 }
             } catch {
-                
-                print(error)
+                print("Erro ao decodificar JSON: \(error)")
             }
         }
-        
-        // Inicia a requisição HTTP
-        task.resume()
+        task.resume() 
     }
 }
