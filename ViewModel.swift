@@ -2,10 +2,10 @@ import Foundation
 
 class ViewModel: ObservableObject {
     
-    @Published var objeto: [obj] = []
+    @Published var objeto: [Dados] = []
     
     func fetch() {
-        guard let url = URL(string: "http://127.0.0.1:1880/localhostGet") else {
+        guard let url = URL(string: "http://192.168.128.25:1880/localhostGet") else {
             print("URL inválida")
             return
         }
@@ -22,7 +22,7 @@ class ViewModel: ObservableObject {
             }
             
             do {
-                let parsed = try JSONDecoder().decode([obj].self, from: data)
+                let parsed = try JSONDecoder().decode([Dados].self, from: data)
                 DispatchQueue.main.async {
                     self.objeto = parsed
                 }
@@ -30,6 +30,6 @@ class ViewModel: ObservableObject {
                 print("Erro ao decodificar JSON: \(error)")
             }
         }
-        task.resume() 
+        task.resume()
     }
 }

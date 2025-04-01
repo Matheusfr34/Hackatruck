@@ -1,6 +1,4 @@
-struct obj: Decodable, Hashable {
-    let disciplina: String?
-    let tarefa: [String]?
-    let data: String?
-
+import Foundation
+struct Dados: Decodable, Hashable {
+    let umidade: String?
 }
